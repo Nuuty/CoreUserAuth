@@ -1,4 +1,4 @@
-﻿{
+{
   "userSecretsId": "aspnet-CoreUserAuth-edce9795-741d-475e-b9a5-a09b8aeb41eb",
 
   "dependencies": {
@@ -43,7 +43,9 @@
     "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": {
       "version": "1.0.0-preview2-final",
       "type": "build"
-    }
+    },
+    "Microsoft.AspNetCore.Rewrite": "1.0.1",
+    "Sendgrid": "9.1.0"
   },
 
   "tools": {
