@@ -45,7 +45,9 @@
       "type": "build"
     },
     "Microsoft.AspNetCore.Rewrite": "1.0.1",
-    "Sendgrid": "9.1.0"
+    "Sendgrid": "9.1.0",
+    "Microsoft.AspNetCore.Authentication.Google": "1.1.1",
+    "Twilio": "5.2.0"
   },
 
   "tools": {
