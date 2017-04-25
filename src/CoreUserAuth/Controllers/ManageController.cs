@@ -328,6 +328,25 @@ namespace CoreUserAuth.Controllers
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
         }
 
+        public IActionResult UserIndex()
+        {
+            var viewModel = _userManager.Users.ToList();
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult CreateUser()
+        //{
+        //    return View();
+        //}
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)

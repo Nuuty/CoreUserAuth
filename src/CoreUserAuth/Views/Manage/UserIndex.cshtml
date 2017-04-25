@@ -1,0 +1,13 @@
+﻿@model List<ApplicationUser>
+@{
+
+}
+<a asp-action="CreateUser">Opret ny bruger</a>
+@if (Model != null && Model.Any())
+{
+    foreach (var user in Model)
+    {
+        <p>@user.Email</p>
+    }
+}
+
