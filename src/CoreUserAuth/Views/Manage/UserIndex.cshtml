@@ -2,12 +2,18 @@
 @{
 
 }
-<a asp-action="CreateUser">Opret ny bruger</a>
-@if (Model != null && Model.Any())
-{
-    foreach (var user in Model)
-    {
-        <p>@user.Email</p>
-    }
-}
+<div class="container">
+    <div class="col-xs-3">
+        <a asp-action="Register" asp-controller="Account" class="btn btn-block btn-primary">Opret ny bruger</a>
+    </div>
+    <div class="col-xs-12">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var user in Model)
+            {
+                <p>@user.Email - <a asp-action="ManageUserRole" asp-route-id="@user.Id" class="btn btn-primary">Edit Role</a></p>
+            }
+        }
+    </div>
+</div>
 

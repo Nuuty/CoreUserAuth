@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreUserAuth.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CoreUserAuth.Models;
+using CoreUserAuth.Models.AccountViewModels;
 using CoreUserAuth.Models.ManageViewModels;
 using CoreUserAuth.Services;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CoreUserAuth.Controllers
 {
@@ -20,14 +24,18 @@ namespace CoreUserAuth.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
+        private readonly RoleStore<IdentityRole> _roleStore;
+        private readonly ApplicationDbContext _dbContext;
 
         public ManageController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IEmailSender emailSender,
         ISmsSender smsSender,
+        RoleStore<IdentityRole> roleStore,
         ILoggerFactory loggerFactory)
         {
+            _roleStore = new RoleStore<IdentityRole>(_dbContext);
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
@@ -334,18 +342,15 @@ namespace CoreUserAuth.Controllers
             return View(viewModel);
         }
 
-        [HttpGet]
-        public IActionResult CreateUser()
+        public IActionResult ManageUserRole(string id)
         {
-            return View();
-        }
+            var viewModel = new ManageRoleViewModel();
+            viewModel.User = _userManager.Users.FirstOrDefault(u => u.Id.Equals(id));
+            
+            viewModel.IdentityRoles = new SelectList(_roleStore.Roles.ToList(), "name", "value");
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult CreateUser()
-        //{
-        //    return View();
-        //}
+            return View(viewModel);
+        }
 
         #region Helpers
 

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using CoreUserAuth.Data;
 using CoreUserAuth.Models;
 using CoreUserAuth.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 
@@ -63,13 +64,15 @@ namespace CoreUserAuth
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
-            
+
+            services.AddIdentity<IdentityUser, IdentityRole>();
 
             //SendGridUser and Key
             services.Configure<AuthMessageSenderOptions>(Configuration);
             
             //TwilioUser and Key
             services.Configure<SMSoptions>(Configuration);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -91,7 +94,7 @@ namespace CoreUserAuth
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            
             app.UseStaticFiles();
 
             app.UseIdentity();
@@ -110,6 +113,11 @@ namespace CoreUserAuth
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            using (var context = app.ApplicationServices.GetRequiredService<ApplicationDbContext>())
+            {
+                SeedData.Initialize(context);
+            }
         }
     }
 }
