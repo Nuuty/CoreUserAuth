@@ -1,16 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{74F899C7-42A2-4B4F-BD9F-FF0D5A1A4D9D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C82F25EF-039D-4F01-99B4-F55988C92AA9}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CoreUserAuth", "src\CoreUserAuth\CoreUserAuth.xproj", "{38E82F52-1E8F-4CBE-911A-68B0B2C238BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreUserAuth", "src\CoreUserAuth\CoreUserAuth.csproj", "{38E82F52-1E8F-4CBE-911A-68B0B2C238BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
