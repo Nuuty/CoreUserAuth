@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CoreUserAuth.Data;
 using CoreUserAuth.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoreUserAuth.Controllers
 {
+    [Authorize]
     public class TodoesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,6 +24,7 @@ namespace CoreUserAuth.Controllers
         // GET: Todoes
         public async Task<IActionResult> Index()
         {
+            await HttpContext.RefreshLoginAsync();
             return View(await _context.Todo.ToListAsync());
         }
 
@@ -43,6 +46,7 @@ namespace CoreUserAuth.Controllers
         }
 
         // GET: Todoes/Create
+        [Authorize(Roles = "Team Player,Organizer")]
         public IActionResult Create()
         {
             return View();
@@ -52,6 +56,7 @@ namespace CoreUserAuth.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Team Player,Organizer")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Description,Due,Title")] Todo todo)
         {
@@ -65,6 +70,7 @@ namespace CoreUserAuth.Controllers
         }
 
         // GET: Todoes/Edit/5
+        [Authorize(Roles = "Team Player,Organizer,Contributor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +91,7 @@ namespace CoreUserAuth.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Team Player,Organizer,Contributor")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Due,Title")] Todo todo)
         {
             if (id != todo.Id)
@@ -116,6 +123,7 @@ namespace CoreUserAuth.Controllers
         }
 
         // GET: Todoes/Delete/5
+        [Authorize(Roles = "Team Player,Contributor")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,6 +141,7 @@ namespace CoreUserAuth.Controllers
         }
 
         // POST: Todoes/Delete/5
+        [Authorize(Roles = "Team Player,Contributor")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

@@ -32,15 +32,17 @@ namespace CoreUserAuth.Controllers
         SignInManager<ApplicationUser> signInManager,
         IEmailSender emailSender,
         ISmsSender smsSender,
-        RoleStore<IdentityRole> roleStore,
+        ApplicationDbContext dbContext,
         ILoggerFactory loggerFactory)
         {
-            _roleStore = new RoleStore<IdentityRole>(_dbContext);
+            
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
+            _dbContext = dbContext;
             _logger = loggerFactory.CreateLogger<ManageController>();
+            _roleStore = new RoleStore<IdentityRole>(_dbContext);
         }
 
         //
@@ -344,12 +346,22 @@ namespace CoreUserAuth.Controllers
 
         public IActionResult ManageUserRole(string id)
         {
-            var viewModel = new ManageRoleViewModel();
-            viewModel.User = _userManager.Users.FirstOrDefault(u => u.Id.Equals(id));
-            
-            viewModel.IdentityRoles = new SelectList(_roleStore.Roles.ToList(), "name", "value");
-
+            var viewModel = new ManageRoleViewModel
+            {
+                User = _userManager.Users.FirstOrDefault(u => u.Id.Equals(id)),
+                IdentityRoles = new SelectList(_roleStore.Roles.ToList(), "Id", "Name")
+            };
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageUserRole(string id, ManageRoleViewModel viewModel)
+        {
+            var user = _userManager.Users.FirstOrDefault(x => x.Id.Equals(id));
+            var role = _roleStore.Roles.FirstOrDefault(x => x.Id.Equals(viewModel.SelectedRoleId));
+
+            await _userManager.AddToRoleAsync(user, role.Name);
+            return RedirectToAction("UserIndex");
         }
 
         #region Helpers

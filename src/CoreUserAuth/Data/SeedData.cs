@@ -20,7 +20,7 @@ namespace CoreUserAuth.Data
 
                 if (!context.Roles.Any(r => r.Name == role))
                 {
-                    var result = roleStore.CreateAsync(new IdentityRole(role)).Result;
+                    var result = roleStore.CreateAsync(new IdentityRole(role){NormalizedName = role.ToUpper()}).Result;
                 }
             }
             context.SaveChanges();

@@ -2,6 +2,23 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
-    
-}
+<h2>Manage role for @Model.User.Email</h2>
+
+<form asp-action="ManageUserRole">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label asp-for="SelectedRoleId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="SelectedRoleId" asp-items="@Model.IdentityRoles">
+                    <option disabled selected>Please selected a role</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="hidden" asp-for="@Model.User.Id" />
+                <input type="submit" value="Update" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>

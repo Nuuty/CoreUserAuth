@@ -2,5 +2,8 @@
 @using CoreUserAuth.Models
 @using CoreUserAuth.Models.AccountViewModels
 @using CoreUserAuth.Models.ManageViewModels
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IAuthorizationService AuthorizationService

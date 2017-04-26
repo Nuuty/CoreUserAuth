@@ -451,6 +451,12 @@ namespace CoreUserAuth.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)
