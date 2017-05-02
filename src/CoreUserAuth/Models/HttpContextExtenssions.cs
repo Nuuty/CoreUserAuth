@@ -16,8 +16,6 @@ namespace CoreUserAuth.Models
             if (context.User == null)
                 return;
 
-            // The example uses base class, IdentityUser, yours may be called 
-            // ApplicationUser if you have added any extra fields to the model
             var userManager = context.RequestServices
                 .GetRequiredService<UserManager<ApplicationUser>>();
             var signInManager = context.RequestServices
