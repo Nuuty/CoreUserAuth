@@ -7,24 +7,29 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CoreUserAuth.Data;
 using CoreUserAuth.Models;
-using Microsoft.AspNetCore.Authorization;
+using CoreUserAuth.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace CoreUserAuth.Controllers
 {
-    [Authorize]
     public class TodoesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public TodoesController(ApplicationDbContext context)
+
+        public TodoesController(ApplicationDbContext context, IEmailSender emailSender, UserManager<ApplicationUser> userManager)
         {
-            _context = context;    
+            _context = context;
+            _emailSender = emailSender;
+            _userManager = userManager;
         }
 
         // GET: Todoes
+        [RefreshLogin]
         public async Task<IActionResult> Index()
         {
-            await HttpContext.RefreshLoginAsync();
             return View(await _context.Todo.ToListAsync());
         }
 
@@ -36,7 +41,8 @@ namespace CoreUserAuth.Controllers
                 return NotFound();
             }
 
-            var todo = await _context.Todo.SingleOrDefaultAsync(m => m.Id == id);
+            var todo = await _context.Todo
+                .SingleOrDefaultAsync(m => m.Id == id);
             if (todo == null)
             {
                 return NotFound();
@@ -46,7 +52,6 @@ namespace CoreUserAuth.Controllers
         }
 
         // GET: Todoes/Create
-        [Authorize(Roles = "Team Player,Organizer")]
         public IActionResult Create()
         {
             return View();
@@ -56,9 +61,8 @@ namespace CoreUserAuth.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Team Player,Organizer")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Due,Title")] Todo todo)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,Due,Done")] Todo todo)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +74,6 @@ namespace CoreUserAuth.Controllers
         }
 
         // GET: Todoes/Edit/5
-        [Authorize(Roles = "Team Player,Organizer,Contributor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -91,8 +94,7 @@ namespace CoreUserAuth.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Team Player,Organizer,Contributor")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Due,Title")] Todo todo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Due,Done")] Todo todo)
         {
             if (id != todo.Id)
             {
@@ -105,6 +107,11 @@ namespace CoreUserAuth.Controllers
                 {
                     _context.Update(todo);
                     await _context.SaveChangesAsync();
+                    if (todo.Done)
+                    {
+                        var user = await _userManager.GetUserAsync(User);
+                        await _emailSender.SendEmailAsync(user.Email, "A todo was finished", $"{user.UserName} marked a todo as done");
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,7 +130,6 @@ namespace CoreUserAuth.Controllers
         }
 
         // GET: Todoes/Delete/5
-        [Authorize(Roles = "Team Player,Contributor")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -131,7 +137,8 @@ namespace CoreUserAuth.Controllers
                 return NotFound();
             }
 
-            var todo = await _context.Todo.SingleOrDefaultAsync(m => m.Id == id);
+            var todo = await _context.Todo
+                .SingleOrDefaultAsync(m => m.Id == id);
             if (todo == null)
             {
                 return NotFound();
@@ -141,7 +148,6 @@ namespace CoreUserAuth.Controllers
         }
 
         // POST: Todoes/Delete/5
-        [Authorize(Roles = "Team Player,Contributor")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

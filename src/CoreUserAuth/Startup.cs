@@ -15,7 +15,7 @@ using CoreUserAuth.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
-
+using Microsoft.Extensions.Configuration.UserSecrets;
 namespace CoreUserAuth
 {
     public class Startup
@@ -30,9 +30,10 @@ namespace CoreUserAuth
             if (env.IsDevelopment())
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
+                //builder.AddUserSecrets();
+                builder.AddUserSecrets<Startup>();
             }
-            builder.AddUserSecrets();
+            //builder.AddUserSecrets();
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
